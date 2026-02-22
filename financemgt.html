@@ -1,0 +1,3188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduPay - Complete School Fee Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c5aa0;
+            --secondary: #f1b814;
+            --accent: #4caf50;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --success: #2ecc71;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --sidebar-width: 250px;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(to bottom, var(--primary), #1a3a6e);
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo i {
+            font-size: 28px;
+            color: var(--secondary);
+            margin-right: 10px;
+        }
+
+        .logo h1 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 5px;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--secondary);
+        }
+
+        .nav-item i {
+            width: 24px;
+            margin-right: 10px;
+            text-align: center;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .header h2 {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid var(--secondary);
+        }
+
+        /* Dashboard Cards */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-top: 4px solid var(--primary);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .card.total-paid {
+            border-top-color: var(--success);
+        }
+
+        .card.pending {
+            border-top-color: var(--warning);
+        }
+
+        .card.overdue {
+            border-top-color: var(--danger);
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .card.total-paid .card-icon {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--success);
+        }
+
+        .card.pending .card-icon {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning);
+        }
+
+        .card.overdue .card-icon {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger);
+        }
+
+        .card.recent-payments .card-icon {
+            background-color: rgba(44, 90, 160, 0.1);
+            color: var(--primary);
+        }
+
+        .card h3 {
+            font-size: 14px;
+            color: var(--gray);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .card .amount {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        /* Module Content */
+        .module-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .module-content.active {
+            display: block;
+        }
+
+        /* Payment Form */
+        .payment-form-container, .form-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .form-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(44, 90, 160, 0.2);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1a3a6e;
+        }
+
+        .btn-secondary {
+            background-color: var(--light-gray);
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover {
+            background-color: #dde1e7;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: #e67e22;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        /* Payments Table */
+        .payments-table-container, .table-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary);
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status.paid {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--success);
+        }
+
+        .status.pending {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning);
+        }
+
+        .status.overdue {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger);
+        }
+
+        .status.active {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--success);
+        }
+
+        .status.inactive {
+            background-color: rgba(108, 117, 125, 0.1);
+            color: var(--gray);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        /* Student Cards */
+        .students-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .student-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+
+        .student-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .student-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .student-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .student-info h4 {
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .student-info p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .student-details {
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--light-gray);
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Fee Structure Cards */
+        .fee-structure-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .fee-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border-top: 4px solid var(--primary);
+        }
+
+        .fee-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .fee-card-header h4 {
+            color: var(--primary);
+        }
+
+        .fee-card-header .amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .fee-breakdown {
+            margin-bottom: 20px;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--light-gray);
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .breakdown-item.total {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 18px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        /* Charts */
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .chart-placeholder {
+            width: 100%;
+            height: 300px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+        }
+
+        .chart-placeholder i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        /* Settings */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .settings-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .settings-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .settings-option:last-child {
+            border-bottom: none;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--success);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Search and Filter */
+        .search-filter-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            color: var(--gray);
+            font-size: 14px;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .logo h1, .nav-item span {
+                display: none;
+            }
+            
+            .logo {
+                justify-content: center;
+                padding: 0 0 20px;
+            }
+            
+            .logo i {
+                margin-right: 0;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+            
+            .nav-item {
+                justify-content: center;
+                padding: 15px 0;
+            }
+            
+            .nav-item i {
+                margin-right: 0;
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-cards, .students-grid, .fee-structure-grid, .settings-grid, .charts-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-filter-container {
+                flex-direction: column;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--success);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast i {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .toast.warning {
+            background-color: var(--warning);
+        }
+
+        .toast.error {
+            background-color: var(--danger);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .modal-header h3 {
+            color: var(--primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Stats Summary */
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 20px;
+            color: white;
+        }
+
+        .stat-icon.primary {
+            background-color: var(--primary);
+        }
+
+        .stat-icon.success {
+            background-color: var(--success);
+        }
+
+        .stat-icon.warning {
+            background-color: var(--warning);
+        }
+
+        .stat-icon.danger {
+            background-color: var(--danger);
+        }
+
+        .stat-info h4 {
+            font-size: 12px;
+            color: var(--gray);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .stat-info .value {
+            font-size: 22px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h1>EduPay</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-module="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </li>
+                <li class="nav-item" data-module="recordPayment">
+                    <i class="fas fa-money-check-alt"></i>
+                    <span>Record Payment</span>
+                </li>
+                <li class="nav-item" data-module="students">
+                    <i class="fas fa-users"></i>
+                    <span>Students</span>
+                </li>
+                <li class="nav-item" data-module="feeStructure">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Fee Structure</span>
+                </li>
+                <li class="nav-item" data-module="reports">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reports</span>
+                </li>
+                <li class="nav-item" data-module="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <h2 id="moduleTitle">Fee Payment Dashboard</h2>
+                <div class="user-info">
+                    <img src="https://ui-avatars.com/api/?name=Admin+User&background=2c5aa0&color=fff" alt="Admin">
+                    <div>
+                        <h4>Admin User</h4>
+                        <p>School Administrator</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Module -->
+            <div id="dashboard" class="module-content active">
+                <!-- Dashboard Cards -->
+                <div class="dashboard-cards">
+                    <div class="card total-paid fade-in">
+                        <div class="card-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <h3>Total Fees Paid</h3>
+                        <div class="amount">$42,850</div>
+                        <p><span class="status paid">+12%</span> from last month</p>
+                    </div>
+                    
+                    <div class="card pending fade-in" style="animation-delay: 0.1s">
+                        <div class="card-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3>Pending Payments</h3>
+                        <div class="amount">$8,420</div>
+                        <p>From 32 students</p>
+                    </div>
+                    
+                    <div class="card overdue fade-in" style="animation-delay: 0.2s">
+                        <div class="card-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h3>Overdue Payments</h3>
+                        <div class="amount">$3,150</div>
+                        <p>From 15 students</p>
+                    </div>
+                    
+                    <div class="card recent-payments fade-in" style="animation-delay: 0.3s">
+                        <div class="card-icon">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <h3>Recent Payments</h3>
+                        <div class="amount">24</div>
+                        <p>In last 7 days</p>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-container">
+                    <div class="chart-card fade-in">
+                        <h3 class="form-title">Payment Trends</h3>
+                        <div class="chart-placeholder">
+                            <i class="fas fa-chart-line"></i>
+                            <p>Monthly Payment Trends Chart</p>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card fade-in" style="animation-delay: 0.2s">
+                        <h3 class="form-title">Fee Collection by Grade</h3>
+                        <div class="chart-placeholder">
+                            <i class="fas fa-chart-pie"></i>
+                            <p>Grade-wise Collection Distribution</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Payments Table -->
+                <div class="payments-table-container fade-in" style="animation-delay: 0.3s">
+                    <h3 class="form-title">Recent Fee Payments</h3>
+                    <div class="table-responsive">
+                        <table id="recentPaymentsTable">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Student Name</th>
+                                    <th>Grade</th>
+                                    <th>Fee Type</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentPaymentsTableBody">
+                                <!-- Recent payments loaded via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Record Payment Module -->
+            <div id="recordPayment" class="module-content">
+                <!-- Payment Form -->
+                <div class="payment-form-container fade-in">
+                    <h3 class="form-title">Record New Fee Payment</h3>
+                    <form id="paymentForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="studentId">Student ID</label>
+                                <input type="text" id="studentId" class="form-control" placeholder="Enter Student ID" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="studentName">Student Name</label>
+                                <input type="text" id="studentName" class="form-control" placeholder="Enter Student Name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="grade">Grade/Class</label>
+                                <select id="grade" class="form-control" required>
+                                    <option value="">Select Grade</option>
+                                    <option value="1">Grade 1</option>
+                                    <option value="2">Grade 2</option>
+                                    <option value="3">Grade 3</option>
+                                    <option value="4">Grade 4</option>
+                                    <option value="5">Grade 5</option>
+                                    <option value="6">Grade 6</option>
+                                    <option value="7">Grade 7</option>
+                                    <option value="8">Grade 8</option>
+                                    <option value="9">Grade 9</option>
+                                    <option value="10">Grade 10</option>
+                                    <option value="11">Grade 11</option>
+                                    <option value="12">Grade 12</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="feeType">Fee Type</label>
+                                <select id="feeType" class="form-control" required>
+                                    <option value="">Select Fee Type</option>
+                                    <option value="tuition">Tuition Fee</option>
+                                    <option value="library">Library Fee</option>
+                                    <option value="lab">Laboratory Fee</option>
+                                    <option value="sports">Sports Fee</option>
+                                    <option value="transport">Transport Fee</option>
+                                    <option value="exam">Examination Fee</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="amount">Amount ($)</label>
+                                <input type="number" id="amount" class="form-control" placeholder="Enter Amount" min="0" step="0.01" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="paymentDate">Payment Date</label>
+                                <input type="date" id="paymentDate" class="form-control" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="paymentMethod">Payment Method</label>
+                                <select id="paymentMethod" class="form-control" required>
+                                    <option value="">Select Payment Method</option>
+                                    <option value="cash">Cash</option>
+                                    <option value="check">Check</option>
+                                    <option value="bank_transfer">Bank Transfer</option>
+                                    <option value="credit_card">Credit Card</option>
+                                    <option value="mobile_money">Mobile Money</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="reference">Reference/Receipt No.</label>
+                                <input type="text" id="reference" class="form-control" placeholder="Enter Reference Number">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="status">Payment Status</label>
+                                <select id="status" class="form-control" required>
+                                    <option value="paid">Paid</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="overdue">Overdue</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="notes">Notes (Optional)</label>
+                            <textarea id="notes" class="form-control" rows="3" placeholder="Add any additional notes"></textarea>
+                        </div>
+                        
+                        <div class="form-group" style="margin-top: 20px;">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Record Payment
+                            </button>
+                            <button type="button" id="clearForm" class="btn btn-secondary">
+                                <i class="fas fa-redo"></i> Clear Form
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- All Payments Table -->
+                <div class="payments-table-container fade-in" style="animation-delay: 0.2s">
+                    <div class="search-filter-container">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="paymentSearch" placeholder="Search payments...">
+                        </div>
+                        <div class="filter-options">
+                            <select id="paymentStatusFilter" class="form-control">
+                                <option value="">All Status</option>
+                                <option value="paid">Paid</option>
+                                <option value="pending">Pending</option>
+                                <option value="overdue">Overdue</option>
+                            </select>
+                            <select id="paymentGradeFilter" class="form-control">
+                                <option value="">All Grades</option>
+                                <option value="1">Grade 1</option>
+                                <option value="2">Grade 2</option>
+                                <option value="3">Grade 3</option>
+                                <option value="4">Grade 4</option>
+                                <option value="5">Grade 5</option>
+                                <option value="6">Grade 6</option>
+                                <option value="7">Grade 7</option>
+                                <option value="8">Grade 8</option>
+                                <option value="9">Grade 9</option>
+                                <option value="10">Grade 10</option>
+                                <option value="11">Grade 11</option>
+                                <option value="12">Grade 12</option>
+                            </select>
+                        </div>
+                    </div>
+                    <h3 class="form-title">All Payments</h3>
+                    <div class="table-responsive">
+                        <table id="allPaymentsTable">
+                            <thead>
+                                <tr>
+                                    <th>Receipt No.</th>
+                                    <th>Student</th>
+                                    <th>Grade</th>
+                                    <th>Fee Type</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                    <th>Method</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allPaymentsTableBody">
+                                <!-- All payments loaded via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Students Module -->
+            <div id="students" class="module-content">
+                <!-- Student Stats -->
+                <div class="stats-summary fade-in">
+                    <div class="stat-item">
+                        <div class="stat-icon primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h4>Total Students</h4>
+                            <div class="value">542</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h4>Fees Cleared</h4>
+                            <div class="value">423</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon warning">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h4>Pending Fees</h4>
+                            <div class="value">87</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon danger">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h4>Overdue Fees</h4>
+                            <div class="value">32</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Student Form -->
+                <div class="form-container fade-in">
+                    <h3 class="form-title">Add New Student</h3>
+                    <form id="studentForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="newStudentId">Student ID</label>
+                                <input type="text" id="newStudentId" class="form-control" placeholder="Auto-generated" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="newFirstName">First Name</label>
+                                <input type="text" id="newFirstName" class="form-control" placeholder="Enter first name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="newLastName">Last Name</label>
+                                <input type="text" id="newLastName" class="form-control" placeholder="Enter last name" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="newGrade">Grade/Class</label>
+                                <select id="newGrade" class="form-control" required>
+                                    <option value="">Select Grade</option>
+                                    <option value="1">Grade 1</option>
+                                    <option value="2">Grade 2</option>
+                                    <option value="3">Grade 3</option>
+                                    <option value="4">Grade 4</option>
+                                    <option value="5">Grade 5</option>
+                                    <option value="6">Grade 6</option>
+                                    <option value="7">Grade 7</option>
+                                    <option value="8">Grade 8</option>
+                                    <option value="9">Grade 9</option>
+                                    <option value="10">Grade 10</option>
+                                    <option value="11">Grade 11</option>
+                                    <option value="12">Grade 12</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="newGender">Gender</label>
+                                <select id="newGender" class="form-control" required>
+                                    <option value="">Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="newDob">Date of Birth</label>
+                                <input type="date" id="newDob" class="form-control" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="newParentName">Parent/Guardian Name</label>
+                                <input type="text" id="newParentName" class="form-control" placeholder="Enter parent name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="newPhone">Phone Number</label>
+                                <input type="tel" id="newPhone" class="form-control" placeholder="Enter phone number" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="newEmail">Email Address</label>
+                                <input type="email" id="newEmail" class="form-control" placeholder="Enter email address">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group" style="margin-top: 20px;">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-user-plus"></i> Add Student
+                            </button>
+                            <button type="button" id="clearStudentForm" class="btn btn-secondary">
+                                <i class="fas fa-redo"></i> Clear Form
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Students Grid -->
+                <div class="search-filter-container fade-in" style="animation-delay: 0.2s">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="studentSearch" placeholder="Search students...">
+                    </div>
+                    <div class="filter-options">
+                        <select id="studentGradeFilter" class="form-control">
+                            <option value="">All Grades</option>
+                            <option value="1">Grade 1</option>
+                            <option value="2">Grade 2</option>
+                            <option value="3">Grade 3</option>
+                            <option value="4">Grade 4</option>
+                            <option value="5">Grade 5</option>
+                            <option value="6">Grade 6</option>
+                            <option value="7">Grade 7</option>
+                            <option value="8">Grade 8</option>
+                            <option value="9">Grade 9</option>
+                            <option value="10">Grade 10</option>
+                            <option value="11">Grade 11</option>
+                            <option value="12">Grade 12</option>
+                        </select>
+                        <select id="studentFeeFilter" class="form-control">
+                            <option value="">All Fee Status</option>
+                            <option value="cleared">Fees Cleared</option>
+                            <option value="pending">Pending Fees</option>
+                            <option value="overdue">Overdue Fees</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="students-grid fade-in" style="animation-delay: 0.3s" id="studentsGrid">
+                    <!-- Student cards loaded via JS -->
+                </div>
+            </div>
+
+            <!-- Fee Structure Module -->
+            <div id="feeStructure" class="module-content">
+                <!-- Fee Structure Stats -->
+                <div class="stats-summary fade-in">
+                    <div class="stat-item">
+                        <div class="stat-icon primary">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h4>Avg. Annual Fee</h4>
+                            <div class="value">$2,850</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon success">
+                            <i class="fas fa-layer-group"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h4>Fee Components</h4>
+                            <div class="value">8</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon warning">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h4>Payment Terms</h4>
+                            <div class="value">3</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon danger">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h4>Late Fee %</h4>
+                            <div class="value">5%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fee Structure Form -->
+                <div class="form-container fade-in">
+                    <h3 class="form-title">Add/Update Fee Structure</h3>
+                    <form id="feeStructureForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="feeGrade">Grade/Class</label>
+                                <select id="feeGrade" class="form-control" required>
+                                    <option value="">Select Grade</option>
+                                    <option value="all">All Grades</option>
+                                    <option value="1">Grade 1</option>
+                                    <option value="2">Grade 2</option>
+                                    <option value="3">Grade 3</option>
+                                    <option value="4">Grade 4</option>
+                                    <option value="5">Grade 5</option>
+                                    <option value="6">Grade 6</option>
+                                    <option value="7">Grade 7</option>
+                                    <option value="8">Grade 8</option>
+                                    <option value="9">Grade 9</option>
+                                    <option value="10">Grade 10</option>
+                                    <option value="11">Grade 11</option>
+                                    <option value="12">Grade 12</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="feeYear">Academic Year</label>
+                                <input type="text" id="feeYear" class="form-control" placeholder="e.g., 2023-2024" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="feeTerm">Payment Term</label>
+                                <select id="feeTerm" class="form-control" required>
+                                    <option value="">Select Term</option>
+                                    <option value="annual">Annual</option>
+                                    <option value="semester">Semester</option>
+                                    <option value="quarterly">Quarterly</option>
+                                    <option value="monthly">Monthly</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tuitionFee">Tuition Fee ($)</label>
+                                <input type="number" id="tuitionFee" class="form-control" placeholder="Tuition fee amount" min="0" step="0.01" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="libraryFee">Library Fee ($)</label>
+                                <input type="number" id="libraryFee" class="form-control" placeholder="Library fee amount" min="0" step="0.01">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="labFee">Laboratory Fee ($)</label>
+                                <input type="number" id="labFee" class="form-control" placeholder="Lab fee amount" min="0" step="0.01">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="sportsFee">Sports Fee ($)</label>
+                                <input type="number" id="sportsFee" class="form-control" placeholder="Sports fee amount" min="0" step="0.01">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="transportFee">Transport Fee ($)</label>
+                                <input type="number" id="transportFee" class="form-control" placeholder="Transport fee amount" min="0" step="0.01">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="examFee">Examination Fee ($)</label>
+                                <input type="number" id="examFee" class="form-control" placeholder="Exam fee amount" min="0" step="0.01">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="otherFee">Other Fees ($)</label>
+                            <input type="number" id="otherFee" class="form-control" placeholder="Other fees amount" min="0" step="0.01">
+                        </div>
+                        
+                        <div class="form-group" style="margin-top: 20px;">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Fee Structure
+                            </button>
+                            <button type="button" id="clearFeeForm" class="btn btn-secondary">
+                                <i class="fas fa-redo"></i> Clear Form
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Fee Structure Cards -->
+                <div class="fee-structure-grid fade-in" style="animation-delay: 0.3s" id="feeStructureGrid">
+                    <!-- Fee structure cards loaded via JS -->
+                </div>
+            </div>
+
+            <!-- Reports Module -->
+            <div id="reports" class="module-content">
+                <!-- Reports Header -->
+                <div class="search-filter-container fade-in">
+                    <div>
+                        <h3 class="form-title" style="margin-bottom: 0;">Financial Reports</h3>
+                        <p>Generate and view detailed reports</p>
+                    </div>
+                    <div class="filter-options">
+                        <select id="reportPeriod" class="form-control">
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month" selected>This Month</option>
+                            <option value="quarter">This Quarter</option>
+                            <option value="year">This Year</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                        <button class="btn btn-primary" id="generateReport">
+                            <i class="fas fa-download"></i> Export Report
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Reports Charts -->
+                <div class="charts-container fade-in">
+                    <div class="chart-card">
+                        <h3 class="form-title">Collection Summary</h3>
+                        <div class="chart-placeholder">
+                            <i class="fas fa-chart-bar"></i>
+                            <p>Fee Collection Summary Chart</p>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card" style="animation-delay: 0.2s">
+                        <h3 class="form-title">Payment Methods</h3>
+                        <div class="chart-placeholder">
+                            <i class="fas fa-chart-pie"></i>
+                            <p>Payment Methods Distribution</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Tables -->
+                <div class="table-container fade-in" style="animation-delay: 0.3s">
+                    <h3 class="form-title">Detailed Report</h3>
+                    <div class="table-responsive">
+                        <table id="reportsTable">
+                            <thead>
+                                <tr>
+                                    <th>Report Type</th>
+                                    <th>Period</th>
+                                    <th>Total Amount</th>
+                                    <th>Transactions</th>
+                                    <th>Generated On</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Monthly Collection</td>
+                                    <td>October 2023</td>
+                                    <td>$12,450.00</td>
+                                    <td>142</td>
+                                    <td>Nov 1, 2023</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-success">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Pending Payments</td>
+                                    <td>As of Nov 5, 2023</td>
+                                    <td>$8,420.00</td>
+                                    <td>32</td>
+                                    <td>Nov 5, 2023</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-success">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Overdue Payments</td>
+                                    <td>As of Nov 5, 2023</td>
+                                    <td>$3,150.00</td>
+                                    <td>15</td>
+                                    <td>Nov 5, 2023</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-success">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Grade-wise Collection</td>
+                                    <td>October 2023</td>
+                                    <td>$12,450.00</td>
+                                    <td>142</td>
+                                    <td>Nov 1, 2023</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-success">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Report Options -->
+                <div class="form-container fade-in" style="animation-delay: 0.4s">
+                    <h3 class="form-title">Generate Custom Report</h3>
+                    <form id="customReportForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="reportType">Report Type</label>
+                                <select id="reportType" class="form-control" required>
+                                    <option value="">Select Report Type</option>
+                                    <option value="collection">Collection Report</option>
+                                    <option value="pending">Pending Payments Report</option>
+                                    <option value="overdue">Overdue Payments Report</option>
+                                    <option value="student">Student-wise Report</option>
+                                    <option value="grade">Grade-wise Report</option>
+                                    <option value="fee">Fee Type-wise Report</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="startDate">Start Date</label>
+                                <input type="date" id="startDate" class="form-control" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="endDate">End Date</label>
+                                <input type="date" id="endDate" class="form-control" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="reportGrade">Grade (Optional)</label>
+                                <select id="reportGrade" class="form-control">
+                                    <option value="">All Grades</option>
+                                    <option value="1">Grade 1</option>
+                                    <option value="2">Grade 2</option>
+                                    <option value="3">Grade 3</option>
+                                    <option value="4">Grade 4</option>
+                                    <option value="5">Grade 5</option>
+                                    <option value="6">Grade 6</option>
+                                    <option value="7">Grade 7</option>
+                                    <option value="8">Grade 8</option>
+                                    <option value="9">Grade 9</option>
+                                    <option value="10">Grade 10</option>
+                                    <option value="11">Grade 11</option>
+                                    <option value="12">Grade 12</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="reportFormat">Output Format</label>
+                                <select id="reportFormat" class="form-control" required>
+                                    <option value="pdf">PDF</option>
+                                    <option value="excel">Excel</option>
+                                    <option value="csv">CSV</option>
+                                    <option value="print">Print</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="visibility: hidden;">Generate</label>
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    <i class="fas fa-chart-line"></i> Generate Report
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Settings Module -->
+            <div id="settings" class="module-content">
+                <!-- Settings Grid -->
+                <div class="settings-grid fade-in">
+                    <!-- General Settings -->
+                    <div class="settings-card">
+                        <h3 class="form-title">General Settings</h3>
+                        <div class="settings-option">
+                            <div>
+                                <h4>School Name</h4>
+                                <p>Global International School</p>
+                            </div>
+                            <button class="btn btn-sm btn-primary">Edit</button>
+                        </div>
+                        <div class="settings-option">
+                            <div>
+                                <h4>Currency</h4>
+                                <p>US Dollar (USD)</p>
+                            </div>
+                            <button class="btn btn-sm btn-primary">Change</button>
+                        </div>
+                        <div class="settings-option">
+                            <div>
+                                <h4>Academic Year</h4>
+                                <p>2023-2024</p>
+                            </div>
+                            <button class="btn btn-sm btn-primary">Set</button>
+                        </div>
+                        <div class="settings-option">
+                            <div>
+                                <h4>Date Format</h4>
+                                <p>MM/DD/YYYY</p>
+                            </div>
+                            <button class="btn btn-sm btn-primary">Change</button>
+                        </div>
+                    </div>
+
+                    <!-- Payment Settings -->
+                    <div class="settings-card">
+                        <h3 class="form-title">Payment Settings</h3>
+                        <div class="settings-option">
+                            <div>
+                                <h4>Late Fee Percentage</h4>
+                                <p>5% per month</p>
+                            </div>
+                            <button class="btn btn-sm btn-primary">Edit</button>
+                        </div>
+                        <div class="settings-option">
+                            <div>
+                                <h4>Due Date Reminders</h4>
+                                <p>7 days before due date</p>
+                            </div>
+                            <button class="btn btn-sm btn-primary">Edit</button>
+                        </div>
+                        <div class="settings-option">
+                            <div>
+                                <h4>Receipt Prefix</h4>
+                                <p>REC-</p>
+                            </div>
+                            <button class="btn btn-sm btn-primary">Edit</button>
+                        </div>
+                        <div class="settings-option">
+                            <div>
+                                <h4>Auto Receipt Numbering</h4>
+                                <p>Enabled</p>
+                            </div>
+                            <div class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notification Settings -->
+                    <div class="settings-card">
+                        <h3 class="form-title">Notifications</h3>
+                        <div class="settings-option">
+                            <div>
+                                <h4>Email Notifications</h4>
+                                <p>Receive payment confirmations</p>
+                            </div>
+                            <div class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </div>
+                        </div>
+                        <div class="settings-option">
+                            <div>
+                                <h4>SMS Notifications</h4>
+                                <p>Send payment reminders</p>
+                            </div>
+                            <div class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </div>
+                        </div>
+                        <div class="settings-option">
+                            <div>
+                                <h4>Dashboard Alerts</h4>
+                                <p>Show overdue payments</p>
+                            </div>
+                            <div class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </div>
+                        </div>
+                        <div class="settings-option">
+                            <div>
+                                <h4>Weekly Reports</h4>
+                                <p>Email weekly summaries</p>
+                            </div>
+                            <div class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Management -->
+                    <div class="settings-card">
+                        <h3 class="form-title">User Management</h3>
+                        <div class="settings-option">
+                            <div>
+                                <h4>Admin Users</h4>
+                                <p>3 users with full access</p>
+                            </div>
+                            <button class="btn btn-sm btn-primary">Manage</button>
+                        </div>
+                        <div class="settings-option">
+                            <div>
+                                <h4>Accountant Users</h4>
+                                <p>2 users with payment access</p>
+                            </div>
+                            <button class="btn btn-sm btn-primary">Manage</button>
+                        </div>
+                        <div class="settings-option">
+                            <div>
+                                <h4>Add New User</h4>
+                                <p>Create new system user</p>
+                            </div>
+                            <button class="btn btn-sm btn-success">Add</button>
+                        </div>
+                        <div class="settings-option">
+                            <div>
+                                <h4>Password Policy</h4>
+                                <p>Change every 90 days</p>
+                            </div>
+                            <button class="btn btn-sm btn-primary">Edit</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Information -->
+                <div class="form-container fade-in" style="animation-delay: 0.2s">
+                    <h3 class="form-title">System Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>System Version</label>
+                            <input type="text" class="form-control" value="EduPay v2.1.0" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Last Updated</label>
+                            <input type="text" class="form-control" value="October 15, 2023" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Database Size</label>
+                            <input type="text" class="form-control" value="45.2 MB" readonly>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Total Records</label>
+                            <input type="text" class="form-control" value="1,842 payment records" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Backup Status</label>
+                            <input type="text" class="form-control" value="Last backup: Yesterday" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label style="visibility: hidden;">Actions</label>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn btn-warning">
+                                    <i class="fas fa-sync"></i> Check for Updates
+                                </button>
+                                <button class="btn btn-danger">
+                                    <i class="fas fa-database"></i> Backup Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>EduPay - Complete School Fee Management System &copy; 2023. All rights reserved.</p>
+                <p>Version 2.1.0 | <i class="fas fa-shield-alt"></i> Secure Payment Processing | <span id="currentDate"></span></p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="studentDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Student Details</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="studentDetailContent">
+                <!-- Student details loaded via JS -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close">Close</button>
+                <button class="btn btn-primary">Edit Student</button>
+                <button class="btn btn-success">Record Payment</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="paymentDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Payment Details</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="paymentDetailContent">
+                <!-- Payment details loaded via JS -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close">Close</button>
+                <button class="btn btn-primary">Edit Payment</button>
+                <button class="btn btn-success">Print Receipt</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Payment recorded successfully!</span>
+    </div>
+
+    <script>
+        // Application State
+        const appState = {
+            currentModule: 'dashboard',
+            payments: [],
+            students: [],
+            feeStructures: [],
+            nextStudentId: 1001,
+            nextReceiptNo: 10001
+        };
+
+        // Module titles mapping
+        const moduleTitles = {
+            dashboard: 'Fee Payment Dashboard',
+            recordPayment: 'Record Fee Payment',
+            students: 'Student Management',
+            feeStructure: 'Fee Structure Management',
+            reports: 'Reports & Analytics',
+            settings: 'System Settings'
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date in footer
+            const now = new Date();
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            // Set today's date as default for payment date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('paymentDate').value = today;
+            
+            // Generate initial student ID
+            document.getElementById('newStudentId').value = 'ST' + appState.nextStudentId;
+            
+            // Load initial data
+            loadInitialData();
+            
+            // Set up navigation
+            setupNavigation();
+            
+            // Set up forms
+            setupForms();
+            
+            // Set up search and filters
+            setupSearchFilters();
+            
+            // Set up modals
+            setupModals();
+        });
+
+        // Load initial data
+        function loadInitialData() {
+            // Sample payment data
+            appState.payments = [
+                { receiptNo: 'REC-10001', studentId: 'ST001', studentName: 'John Smith', grade: '10', feeType: 'Tuition', amount: 850, date: '2023-10-15', method: 'Bank Transfer', status: 'paid', reference: 'BT-20231015-001' },
+                { receiptNo: 'REC-10002', studentId: 'ST002', studentName: 'Emma Johnson', grade: '8', feeType: 'Library', amount: 120, date: '2023-10-14', method: 'Cash', status: 'paid', reference: 'CSH-1014' },
+                { receiptNo: 'REC-10003', studentId: 'ST003', studentName: 'Michael Brown', grade: '12', feeType: 'Tuition', amount: 920, date: '2023-10-13', method: 'Credit Card', status: 'pending', reference: 'CC-789012' },
+                { receiptNo: 'REC-10004', studentId: 'ST004', studentName: 'Sarah Davis', grade: '9', feeType: 'Sports', amount: 75, date: '2023-10-12', method: 'Mobile Money', status: 'paid', reference: 'MM-456123' },
+                { receiptNo: 'REC-10005', studentId: 'ST005', studentName: 'David Wilson', grade: '11', feeType: 'Laboratory', amount: 200, date: '2023-10-11', method: 'Check', status: 'overdue', reference: 'CHK-789' },
+                { receiptNo: 'REC-10006', studentId: 'ST006', studentName: 'Lisa Taylor', grade: '7', feeType: 'Transport', amount: 300, date: '2023-10-10', method: 'Bank Transfer', status: 'paid', reference: 'BT-20231010-002' },
+                { receiptNo: 'REC-10007', studentId: 'ST007', studentName: 'Robert Anderson', grade: '6', feeType: 'Examination', amount: 150, date: '2023-10-09', method: 'Cash', status: 'paid', reference: 'CSH-1009' },
+                { receiptNo: 'REC-10008', studentId: 'ST008', studentName: 'Maria Garcia', grade: '5', feeType: 'Tuition', amount: 800, date: '2023-10-08', method: 'Credit Card', status: 'pending', reference: 'CC-345678' }
+            ];
+            
+            // Sample student data
+            appState.students = [
+                { id: 'ST001', firstName: 'John', lastName: 'Smith', fullName: 'John Smith', grade: '10', gender: 'male', dob: '2007-05-15', parentName: 'Robert Smith', phone: '(123) 456-7890', email: 'parent.smith@email.com', feeStatus: 'cleared' },
+                { id: 'ST002', firstName: 'Emma', lastName: 'Johnson', fullName: 'Emma Johnson', grade: '8', gender: 'female', dob: '2009-08-22', parentName: 'Mary Johnson', phone: '(123) 456-7891', email: 'm.johnson@email.com', feeStatus: 'cleared' },
+                { id: 'ST003', firstName: 'Michael', lastName: 'Brown', fullName: 'Michael Brown', grade: '12', gender: 'male', dob: '2005-11-30', parentName: 'James Brown', phone: '(123) 456-7892', email: 'j.brown@email.com', feeStatus: 'pending' },
+                { id: 'ST004', firstName: 'Sarah', lastName: 'Davis', fullName: 'Sarah Davis', grade: '9', gender: 'female', dob: '2008-03-14', parentName: 'Patricia Davis', phone: '(123) 456-7893', email: 'p.davis@email.com', feeStatus: 'cleared' },
+                { id: 'ST005', firstName: 'David', lastName: 'Wilson', fullName: 'David Wilson', grade: '11', gender: 'male', dob: '2006-07-09', parentName: 'Jennifer Wilson', phone: '(123) 456-7894', email: 'j.wilson@email.com', feeStatus: 'overdue' },
+                { id: 'ST006', firstName: 'Lisa', lastName: 'Taylor', fullName: 'Lisa Taylor', grade: '7', gender: 'female', dob: '2010-01-25', parentName: 'Richard Taylor', phone: '(123) 456-7895', email: 'r.taylor@email.com', feeStatus: 'cleared' },
+                { id: 'ST007', firstName: 'Robert', lastName: 'Anderson', fullName: 'Robert Anderson', grade: '6', gender: 'male', dob: '2011-12-03', parentName: 'Susan Anderson', phone: '(123) 456-7896', email: 's.anderson@email.com', feeStatus: 'cleared' },
+                { id: 'ST008', firstName: 'Maria', lastName: 'Garcia', fullName: 'Maria Garcia', grade: '5', gender: 'female', dob: '2012-09-18', parentName: 'Thomas Garcia', phone: '(123) 456-7897', email: 't.garcia@email.com', feeStatus: 'pending' }
+            ];
+            
+            // Sample fee structure data
+            appState.feeStructures = [
+                { grade: 'all', year: '2023-2024', term: 'annual', tuition: 800, library: 50, lab: 100, sports: 75, transport: 300, exam: 150, other: 25 },
+                { grade: '1', year: '2023-2024', term: 'annual', tuition: 700, library: 40, lab: 0, sports: 50, transport: 250, exam: 100, other: 20 },
+                { grade: '10', year: '2023-2024', term: 'annual', tuition: 950, library: 60, lab: 150, sports: 100, transport: 350, exam: 200, other: 30 },
+                { grade: '12', year: '2023-2024', term: 'annual', tuition: 1000, library: 70, lab: 200, sports: 120, transport: 400, exam: 250, other: 40 }
+            ];
+            
+            // Update next IDs
+            appState.nextStudentId = 1009;
+            appState.nextReceiptNo = 10009;
+            
+            // Load data into current module
+            loadModuleData(appState.currentModule);
+        }
+
+        // Set up navigation between modules
+        function setupNavigation() {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const module = this.getAttribute('data-module');
+                    switchModule(module);
+                });
+            });
+        }
+
+        // Switch between modules
+        function switchModule(module) {
+            // Update active state in navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-module') === module) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // Update module title
+            document.getElementById('moduleTitle').textContent = moduleTitles[module];
+            
+            // Hide all modules
+            document.querySelectorAll('.module-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Show selected module
+            document.getElementById(module).classList.add('active');
+            
+            // Load module data
+            loadModuleData(module);
+            
+            // Update app state
+            appState.currentModule = module;
+        }
+
+        // Load data for the current module
+        function loadModuleData(module) {
+            switch(module) {
+                case 'dashboard':
+                    loadDashboardData();
+                    break;
+                case 'recordPayment':
+                    loadRecordPaymentData();
+                    break;
+                case 'students':
+                    loadStudentsData();
+                    break;
+                case 'feeStructure':
+                    loadFeeStructureData();
+                    break;
+                case 'reports':
+                    loadReportsData();
+                    break;
+                case 'settings':
+                    loadSettingsData();
+                    break;
+            }
+        }
+
+        // Load dashboard data
+        function loadDashboardData() {
+            // Load recent payments table
+            const recentPaymentsTableBody = document.getElementById('recentPaymentsTableBody');
+            recentPaymentsTableBody.innerHTML = '';
+            
+            // Show only 5 most recent payments
+            const recentPayments = [...appState.payments].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+            
+            recentPayments.forEach(payment => {
+                const row = document.createElement('tr');
+                
+                // Format date
+                const paymentDate = new Date(payment.date);
+                const formattedDate = paymentDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                // Format currency
+                const formattedAmount = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                }).format(payment.amount);
+                
+                row.innerHTML = `
+                    <td>${payment.studentId}</td>
+                    <td>${payment.studentName}</td>
+                    <td>Grade ${payment.grade}</td>
+                    <td>${payment.feeType} Fee</td>
+                    <td><strong>${formattedAmount}</strong></td>
+                    <td>${formattedDate}</td>
+                    <td><span class="status ${payment.status}">${payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}</span></td>
+                `;
+                
+                recentPaymentsTableBody.appendChild(row);
+            });
+        }
+
+        // Load record payment data
+        function loadRecordPaymentData() {
+            // Load all payments table
+            const allPaymentsTableBody = document.getElementById('allPaymentsTableBody');
+            allPaymentsTableBody.innerHTML = '';
+            
+            appState.payments.forEach(payment => {
+                const row = document.createElement('tr');
+                
+                // Format date
+                const paymentDate = new Date(payment.date);
+                const formattedDate = paymentDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                // Format currency
+                const formattedAmount = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                }).format(payment.amount);
+                
+                // Format payment method
+                const methodMap = {
+                    'cash': 'Cash',
+                    'check': 'Check',
+                    'bank_transfer': 'Bank Transfer',
+                    'credit_card': 'Credit Card',
+                    'mobile_money': 'Mobile Money'
+                };
+                
+                const formattedMethod = methodMap[payment.method] || payment.method;
+                
+                row.innerHTML = `
+                    <td>${payment.receiptNo}</td>
+                    <td>${payment.studentName}</td>
+                    <td>Grade ${payment.grade}</td>
+                    <td>${payment.feeType} Fee</td>
+                    <td><strong>${formattedAmount}</strong></td>
+                    <td>${formattedDate}</td>
+                    <td>${formattedMethod}</td>
+                    <td><span class="status ${payment.status}">${payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-primary view-payment" data-receipt="${payment.receiptNo}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                allPaymentsTableBody.appendChild(row);
+            });
+            
+            // Add event listeners to view payment buttons
+            document.querySelectorAll('.view-payment').forEach(button => {
+                button.addEventListener('click', function() {
+                    const receiptNo = this.getAttribute('data-receipt');
+                    showPaymentDetailModal(receiptNo);
+                });
+            });
+        }
+
+        // Load students data
+        function loadStudentsData() {
+            // Load students grid
+            const studentsGrid = document.getElementById('studentsGrid');
+            studentsGrid.innerHTML = '';
+            
+            appState.students.forEach(student => {
+                const studentCard = document.createElement('div');
+                studentCard.className = 'student-card';
+                
+                // Calculate age from DOB
+                const dob = new Date(student.dob);
+                const age = new Date().getFullYear() - dob.getFullYear();
+                
+                // Get fee status with appropriate class
+                let feeStatusClass = '';
+                let feeStatusText = '';
+                
+                switch(student.feeStatus) {
+                    case 'cleared':
+                        feeStatusClass = 'status paid';
+                        feeStatusText = 'Fees Cleared';
+                        break;
+                    case 'pending':
+                        feeStatusClass = 'status pending';
+                        feeStatusText = 'Pending Fees';
+                        break;
+                    case 'overdue':
+                        feeStatusClass = 'status overdue';
+                        feeStatusText = 'Overdue Fees';
+                        break;
+                }
+                
+                // Get first letter for avatar
+                const firstLetter = student.firstName.charAt(0);
+                
+                studentCard.innerHTML = `
+                    <div class="student-header">
+                        <div class="student-avatar" style="background-color: ${getColorFromName(student.firstName)};">
+                            ${firstLetter}
+                        </div>
+                        <div class="student-info">
+                            <h4>${student.fullName}</h4>
+                            <p>${student.id} | Grade ${student.grade}</p>
+                            <p><span class="${feeStatusClass}">${feeStatusText}</span></p>
+                        </div>
+                    </div>
+                    <div class="student-details">
+                        <div class="detail-item">
+                            <span>Gender:</span>
+                            <span>${student.gender.charAt(0).toUpperCase() + student.gender.slice(1)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Age:</span>
+                            <span>${age} years</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Parent:</span>
+                            <span>${student.parentName}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Phone:</span>
+                            <span>${student.phone}</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-sm btn-primary view-student" data-id="${student.id}">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-sm btn-success">
+                            <i class="fas fa-money-check"></i> Pay
+                        </button>
+                    </div>
+                `;
+                
+                studentsGrid.appendChild(studentCard);
+            });
+            
+            // Add event listeners to view student buttons
+            document.querySelectorAll('.view-student').forEach(button => {
+                button.addEventListener('click', function() {
+                    const studentId = this.getAttribute('data-id');
+                    showStudentDetailModal(studentId);
+                });
+            });
+        }
+
+        // Load fee structure data
+        function loadFeeStructureData() {
+            // Load fee structure grid
+            const feeStructureGrid = document.getElementById('feeStructureGrid');
+            feeStructureGrid.innerHTML = '';
+            
+            appState.feeStructures.forEach(fee => {
+                const feeCard = document.createElement('div');
+                feeCard.className = 'fee-card';
+                
+                // Calculate total
+                const total = fee.tuition + fee.library + fee.lab + fee.sports + fee.transport + fee.exam + fee.other;
+                
+                // Format grade display
+                const gradeDisplay = fee.grade === 'all' ? 'All Grades' : `Grade ${fee.grade}`;
+                
+                feeCard.innerHTML = `
+                    <div class="fee-card-header">
+                        <h4>${gradeDisplay}</h4>
+                        <div class="amount">$${total.toLocaleString()}</div>
+                    </div>
+                    <div class="fee-breakdown">
+                        <div class="breakdown-item">
+                            <span>Tuition Fee</span>
+                            <span>$${fee.tuition.toLocaleString()}</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Library Fee</span>
+                            <span>$${fee.library.toLocaleString()}</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Laboratory Fee</span>
+                            <span>$${fee.lab.toLocaleString()}</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Sports Fee</span>
+                            <span>$${fee.sports.toLocaleString()}</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Transport Fee</span>
+                            <span>$${fee.transport.toLocaleString()}</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Examination Fee</span>
+                            <span>$${fee.exam.toLocaleString()}</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Other Fees</span>
+                            <span>$${fee.other.toLocaleString()}</span>
+                        </div>
+                        <div class="breakdown-item total">
+                            <span>Total Annual Fee</span>
+                            <span>$${total.toLocaleString()}</span>
+                        </div>
+                    </div>
+                    <div class="fee-card-footer">
+                        <p><strong>Academic Year:</strong> ${fee.year}</p>
+                        <p><strong>Payment Term:</strong> ${fee.term.charAt(0).toUpperCase() + fee.term.slice(1)}</p>
+                        <div class="action-buttons" style="margin-top: 15px;">
+                            <button class="btn btn-sm btn-primary">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-success">
+                                <i class="fas fa-copy"></i> Duplicate
+                            </button>
+                            <button class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                feeStructureGrid.appendChild(feeCard);
+            });
+        }
+
+        // Load reports data
+        function loadReportsData() {
+            // Set default dates for custom report
+            const today = new Date();
+            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            
+            document.getElementById('startDate').value = firstDayOfMonth.toISOString().split('T')[0];
+            document.getElementById('endDate').value = today.toISOString().split('T')[0];
+        }
+
+        // Load settings data
+        function loadSettingsData() {
+            // Settings are static for now
+        }
+
+        // Set up forms
+        function setupForms() {
+            // Payment form
+            document.getElementById('paymentForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                recordPayment();
+            });
+            
+            // Clear payment form
+            document.getElementById('clearForm').addEventListener('click', function() {
+                clearPaymentForm();
+            });
+            
+            // Student form
+            document.getElementById('studentForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addStudent();
+            });
+            
+            // Clear student form
+            document.getElementById('clearStudentForm').addEventListener('click', function() {
+                clearStudentForm();
+            });
+            
+            // Fee structure form
+            document.getElementById('feeStructureForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveFeeStructure();
+            });
+            
+            // Clear fee form
+            document.getElementById('clearFeeForm').addEventListener('click', function() {
+                clearFeeForm();
+            });
+            
+            // Custom report form
+            document.getElementById('customReportForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                generateCustomReport();
+            });
+            
+            // Generate report button
+            document.getElementById('generateReport').addEventListener('click', function() {
+                exportReport();
+            });
+        }
+
+        // Set up search and filters
+        function setupSearchFilters() {
+            // Payment search
+            document.getElementById('paymentSearch').addEventListener('input', function() {
+                filterPayments();
+            });
+            
+            // Payment status filter
+            document.getElementById('paymentStatusFilter').addEventListener('change', function() {
+                filterPayments();
+            });
+            
+            // Payment grade filter
+            document.getElementById('paymentGradeFilter').addEventListener('change', function() {
+                filterPayments();
+            });
+            
+            // Student search
+            document.getElementById('studentSearch').addEventListener('input', function() {
+                filterStudents();
+            });
+            
+            // Student grade filter
+            document.getElementById('studentGradeFilter').addEventListener('change', function() {
+                filterStudents();
+            });
+            
+            // Student fee filter
+            document.getElementById('studentFeeFilter').addEventListener('change', function() {
+                filterStudents();
+            });
+        }
+
+        // Set up modals
+        function setupModals() {
+            // Close modal buttons
+            document.querySelectorAll('.modal-close').forEach(button => {
+                button.addEventListener('click', function() {
+                    closeAllModals();
+                });
+            });
+            
+            // Close modal when clicking outside
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeAllModals();
+                    }
+                });
+            });
+        }
+
+        // Record new payment
+        function recordPayment() {
+            // Get form values
+            const studentId = document.getElementById('studentId').value;
+            const studentName = document.getElementById('studentName').value;
+            const grade = document.getElementById('grade').value;
+            const feeType = document.getElementById('feeType').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const paymentDate = document.getElementById('paymentDate').value;
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const status = document.getElementById('status').value;
+            const reference = document.getElementById('reference').value || `REF-${Date.now()}`;
+            const notes = document.getElementById('notes').value;
+            
+            // Validate required fields
+            if (!studentId || !studentName || !grade || !feeType || !amount || !paymentDate || !paymentMethod) {
+                showToast('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            // Format fee type for display
+            const feeTypeMap = {
+                'tuition': 'Tuition',
+                'library': 'Library',
+                'lab': 'Laboratory',
+                'sports': 'Sports',
+                'transport': 'Transport',
+                'exam': 'Examination',
+                'other': 'Other'
+            };
+            
+            // Create new payment object
+            const newPayment = {
+                receiptNo: `REC-${appState.nextReceiptNo}`,
+                studentId: studentId,
+                studentName: studentName,
+                grade: grade,
+                feeType: feeTypeMap[feeType] || feeType,
+                amount: amount,
+                date: paymentDate,
+                method: paymentMethod,
+                status: status,
+                reference: reference,
+                notes: notes
+            };
+            
+            // Add to payments array
+            appState.payments.unshift(newPayment);
+            
+            // Increment receipt number
+            appState.nextReceiptNo++;
+            
+            // Show success message
+            showToast(`Payment recorded successfully! Receipt: ${newPayment.receiptNo}`);
+            
+            // Clear form
+            clearPaymentForm();
+            
+            // Reload module data if we're in the record payment module
+            if (appState.currentModule === 'recordPayment') {
+                loadRecordPaymentData();
+            }
+            
+            // Update dashboard if we're in the dashboard module
+            if (appState.currentModule === 'dashboard') {
+                loadDashboardData();
+            }
+        }
+
+        // Clear payment form
+        function clearPaymentForm() {
+            document.getElementById('paymentForm').reset();
+            
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('paymentDate').value = today;
+            
+            // Set default status
+            document.getElementById('status').value = 'paid';
+        }
+
+        // Add new student
+        function addStudent() {
+            // Get form values
+            const firstName = document.getElementById('newFirstName').value;
+            const lastName = document.getElementById('newLastName').value;
+            const grade = document.getElementById('newGrade').value;
+            const gender = document.getElementById('newGender').value;
+            const dob = document.getElementById('newDob').value;
+            const parentName = document.getElementById('newParentName').value;
+            const phone = document.getElementById('newPhone').value;
+            const email = document.getElementById('newEmail').value;
+            
+            // Validate required fields
+            if (!firstName || !lastName || !grade || !gender || !dob || !parentName || !phone) {
+                showToast('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            // Create new student object
+            const newStudent = {
+                id: `ST${appState.nextStudentId}`,
+                firstName: firstName,
+                lastName: lastName,
+                fullName: `${firstName} ${lastName}`,
+                grade: grade,
+                gender: gender,
+                dob: dob,
+                parentName: parentName,
+                phone: phone,
+                email: email,
+                feeStatus: 'pending' // Default status
+            };
+            
+            // Add to students array
+            appState.students.push(newStudent);
+            
+            // Increment student ID
+            appState.nextStudentId++;
+            
+            // Show success message
+            showToast(`Student added successfully! Student ID: ${newStudent.id}`);
+            
+            // Clear form
+            clearStudentForm();
+            
+            // Update student ID field
+            document.getElementById('newStudentId').value = `ST${appState.nextStudentId}`;
+            
+            // Reload module data if we're in the students module
+            if (appState.currentModule === 'students') {
+                loadStudentsData();
+            }
+        }
+
+        // Clear student form
+        function clearStudentForm() {
+            document.getElementById('studentForm').reset();
+            
+            // Update student ID field
+            document.getElementById('newStudentId').value = `ST${appState.nextStudentId}`;
+            
+            // Set default DOB (10 years ago)
+            const defaultDob = new Date();
+            defaultDob.setFullYear(defaultDob.getFullYear() - 10);
+            document.getElementById('newDob').value = defaultDob.toISOString().split('T')[0];
+        }
+
+        // Save fee structure
+        function saveFeeStructure() {
+            // Get form values
+            const grade = document.getElementById('feeGrade').value;
+            const year = document.getElementById('feeYear').value;
+            const term = document.getElementById('feeTerm').value;
+            const tuition = parseFloat(document.getElementById('tuitionFee').value) || 0;
+            const library = parseFloat(document.getElementById('libraryFee').value) || 0;
+            const lab = parseFloat(document.getElementById('labFee').value) || 0;
+            const sports = parseFloat(document.getElementById('sportsFee').value) || 0;
+            const transport = parseFloat(document.getElementById('transportFee').value) || 0;
+            const exam = parseFloat(document.getElementById('examFee').value) || 0;
+            const other = parseFloat(document.getElementById('otherFee').value) || 0;
+            
+            // Validate required fields
+            if (!grade || !year || !term) {
+                showToast('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            // Check if fee structure already exists for this grade and year
+            const existingIndex = appState.feeStructures.findIndex(fee => fee.grade === grade && fee.year === year);
+            
+            // Create fee structure object
+            const feeStructure = {
+                grade: grade,
+                year: year,
+                term: term,
+                tuition: tuition,
+                library: library,
+                lab: lab,
+                sports: sports,
+                transport: transport,
+                exam: exam,
+                other: other
+            };
+            
+            // Update or add fee structure
+            if (existingIndex >= 0) {
+                appState.feeStructures[existingIndex] = feeStructure;
+                showToast(`Fee structure updated for ${grade === 'all' ? 'All Grades' : 'Grade ' + grade}`);
+            } else {
+                appState.feeStructures.push(feeStructure);
+                showToast(`Fee structure added for ${grade === 'all' ? 'All Grades' : 'Grade ' + grade}`);
+            }
+            
+            // Clear form
+            clearFeeForm();
+            
+            // Reload module data if we're in the fee structure module
+            if (appState.currentModule === 'feeStructure') {
+                loadFeeStructureData();
+            }
+        }
+
+        // Clear fee form
+        function clearFeeForm() {
+            document.getElementById('feeStructureForm').reset();
+            
+            // Set default academic year
+            const currentYear = new Date().getFullYear();
+            document.getElementById('feeYear').value = `${currentYear}-${currentYear + 1}`;
+        }
+
+        // Generate custom report
+        function generateCustomReport() {
+            // Get form values
+            const reportType = document.getElementById('reportType').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const grade = document.getElementById('reportGrade').value;
+            const format = document.getElementById('reportFormat').value;
+            
+            // Validate required fields
+            if (!reportType || !startDate || !endDate) {
+                showToast('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            // Simulate report generation
+            showToast(`Generating ${reportType} report for ${startDate} to ${endDate} in ${format.toUpperCase()} format...`, 'warning');
+            
+            // In a real application, this would generate and download the report
+            setTimeout(() => {
+                showToast(`Report generated successfully! Check your downloads for the ${format.toUpperCase()} file.`);
+            }, 1500);
+        }
+
+        // Export report
+        function exportReport() {
+            const period = document.getElementById('reportPeriod').value;
+            showToast(`Exporting ${period} report...`, 'warning');
+            
+            // In a real application, this would export the report
+            setTimeout(() => {
+                showToast('Report exported successfully! Check your downloads.');
+            }, 1500);
+        }
+
+        // Filter payments
+        function filterPayments() {
+            const searchTerm = document.getElementById('paymentSearch').value.toLowerCase();
+            const statusFilter = document.getElementById('paymentStatusFilter').value;
+            const gradeFilter = document.getElementById('paymentGradeFilter').value;
+            
+            const filteredPayments = appState.payments.filter(payment => {
+                // Search filter
+                const matchesSearch = !searchTerm || 
+                    payment.studentName.toLowerCase().includes(searchTerm) ||
+                    payment.studentId.toLowerCase().includes(searchTerm) ||
+                    payment.receiptNo.toLowerCase().includes(searchTerm) ||
+                    payment.feeType.toLowerCase().includes(searchTerm);
+                
+                // Status filter
+                const matchesStatus = !statusFilter || payment.status === statusFilter;
+                
+                // Grade filter
+                const matchesGrade = !gradeFilter || payment.grade === gradeFilter;
+                
+                return matchesSearch && matchesStatus && matchesGrade;
+            });
+            
+            // Update table with filtered payments
+            const allPaymentsTableBody = document.getElementById('allPaymentsTableBody');
+            allPaymentsTableBody.innerHTML = '';
+            
+            filteredPayments.forEach(payment => {
+                const row = document.createElement('tr');
+                
+                // Format date
+                const paymentDate = new Date(payment.date);
+                const formattedDate = paymentDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                // Format currency
+                const formattedAmount = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                }).format(payment.amount);
+                
+                // Format payment method
+                const methodMap = {
+                    'cash': 'Cash',
+                    'check': 'Check',
+                    'bank_transfer': 'Bank Transfer',
+                    'credit_card': 'Credit Card',
+                    'mobile_money': 'Mobile Money'
+                };
+                
+                const formattedMethod = methodMap[payment.method] || payment.method;
+                
+                row.innerHTML = `
+                    <td>${payment.receiptNo}</td>
+                    <td>${payment.studentName}</td>
+                    <td>Grade ${payment.grade}</td>
+                    <td>${payment.feeType} Fee</td>
+                    <td><strong>${formattedAmount}</strong></td>
+                    <td>${formattedDate}</td>
+                    <td>${formattedMethod}</td>
+                    <td><span class="status ${payment.status}">${payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-primary view-payment" data-receipt="${payment.receiptNo}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                allPaymentsTableBody.appendChild(row);
+            });
+            
+            // Add event listeners to view payment buttons
+            document.querySelectorAll('.view-payment').forEach(button => {
+                button.addEventListener('click', function() {
+                    const receiptNo = this.getAttribute('data-receipt');
+                    showPaymentDetailModal(receiptNo);
+                });
+            });
+        }
+
+        // Filter students
+        function filterStudents() {
+            const searchTerm = document.getElementById('studentSearch').value.toLowerCase();
+            const gradeFilter = document.getElementById('studentGradeFilter').value;
+            const feeFilter = document.getElementById('studentFeeFilter').value;
+            
+            const filteredStudents = appState.students.filter(student => {
+                // Search filter
+                const matchesSearch = !searchTerm || 
+                    student.fullName.toLowerCase().includes(searchTerm) ||
+                    student.id.toLowerCase().includes(searchTerm) ||
+                    student.parentName.toLowerCase().includes(searchTerm);
+                
+                // Grade filter
+                const matchesGrade = !gradeFilter || student.grade === gradeFilter;
+                
+                // Fee status filter
+                const matchesFee = !feeFilter || student.feeStatus === feeFilter;
+                
+                return matchesSearch && matchesGrade && matchesFee;
+            });
+            
+            // Update grid with filtered students
+            const studentsGrid = document.getElementById('studentsGrid');
+            studentsGrid.innerHTML = '';
+            
+            filteredStudents.forEach(student => {
+                const studentCard = document.createElement('div');
+                studentCard.className = 'student-card';
+                
+                // Calculate age from DOB
+                const dob = new Date(student.dob);
+                const age = new Date().getFullYear() - dob.getFullYear();
+                
+                // Get fee status with appropriate class
+                let feeStatusClass = '';
+                let feeStatusText = '';
+                
+                switch(student.feeStatus) {
+                    case 'cleared':
+                        feeStatusClass = 'status paid';
+                        feeStatusText = 'Fees Cleared';
+                        break;
+                    case 'pending':
+                        feeStatusClass = 'status pending';
+                        feeStatusText = 'Pending Fees';
+                        break;
+                    case 'overdue':
+                        feeStatusClass = 'status overdue';
+                        feeStatusText = 'Overdue Fees';
+                        break;
+                }
+                
+                // Get first letter for avatar
+                const firstLetter = student.firstName.charAt(0);
+                
+                studentCard.innerHTML = `
+                    <div class="student-header">
+                        <div class="student-avatar" style="background-color: ${getColorFromName(student.firstName)};">
+                            ${firstLetter}
+                        </div>
+                        <div class="student-info">
+                            <h4>${student.fullName}</h4>
+                            <p>${student.id} | Grade ${student.grade}</p>
+                            <p><span class="${feeStatusClass}">${feeStatusText}</span></p>
+                        </div>
+                    </div>
+                    <div class="student-details">
+                        <div class="detail-item">
+                            <span>Gender:</span>
+                            <span>${student.gender.charAt(0).toUpperCase() + student.gender.slice(1)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Age:</span>
+                            <span>${age} years</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Parent:</span>
+                            <span>${student.parentName}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Phone:</span>
+                            <span>${student.phone}</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-sm btn-primary view-student" data-id="${student.id}">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-sm btn-success">
+                            <i class="fas fa-money-check"></i> Pay
+                        </button>
+                    </div>
+                `;
+                
+                studentsGrid.appendChild(studentCard);
+            });
+            
+            // Add event listeners to view student buttons
+            document.querySelectorAll('.view-student').forEach(button => {
+                button.addEventListener('click', function() {
+                    const studentId = this.getAttribute('data-id');
+                    showStudentDetailModal(studentId);
+                });
+            });
+        }
+
+        // Show student detail modal
+        function showStudentDetailModal(studentId) {
+            const student = appState.students.find(s => s.id === studentId);
+            if (!student) return;
+            
+            // Calculate age from DOB
+            const dob = new Date(student.dob);
+            const age = new Date().getFullYear() - dob.getFullYear();
+            const formattedDob = dob.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            // Get fee status with appropriate class
+            let feeStatusClass = '';
+            let feeStatusText = '';
+            
+            switch(student.feeStatus) {
+                case 'cleared':
+                    feeStatusClass = 'status paid';
+                    feeStatusText = 'Fees Cleared';
+                    break;
+                case 'pending':
+                    feeStatusClass = 'status pending';
+                    feeStatusText = 'Pending Fees';
+                    break;
+                case 'overdue':
+                    feeStatusClass = 'status overdue';
+                    feeStatusText = 'Overdue Fees';
+                    break;
+            }
+            
+            // Get student's payments
+            const studentPayments = appState.payments.filter(p => p.studentId === studentId);
+            const totalPaid = studentPayments.filter(p => p.status === 'paid').reduce((sum, p) => sum + p.amount, 0);
+            const pendingPayments = studentPayments.filter(p => p.status === 'pending');
+            const totalPending = pendingPayments.reduce((sum, p) => sum + p.amount, 0);
+            
+            // Populate modal content
+            document.getElementById('studentDetailContent').innerHTML = `
+                <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                    <div class="student-avatar" style="width: 80px; height: 80px; font-size: 32px; background-color: ${getColorFromName(student.firstName)};">
+                        ${student.firstName.charAt(0)}
+                    </div>
+                    <div style="margin-left: 20px;">
+                        <h3 style="margin-bottom: 5px;">${student.fullName}</h3>
+                        <p style="color: var(--gray); margin-bottom: 5px;">${student.id} | Grade ${student.grade}</p>
+                        <p><span class="${feeStatusClass}">${feeStatusText}</span></p>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date of Birth</label>
+                        <input type="text" class="form-control" value="${formattedDob} (${age} years)" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <input type="text" class="form-control" value="${student.gender.charAt(0).toUpperCase() + student.gender.slice(1)}" readonly>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Parent/Guardian</label>
+                    <input type="text" class="form-control" value="${student.parentName}" readonly>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" class="form-control" value="${student.phone}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="text" class="form-control" value="${student.email || 'Not provided'}" readonly>
+                    </div>
+                </div>
+                
+                <h4 style="margin-top: 25px; margin-bottom: 15px; color: var(--primary);">Fee Payment Summary</h4>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Total Paid</label>
+                        <input type="text" class="form-control" value="$${totalPaid.toLocaleString()}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Pending Payments</label>
+                        <input type="text" class="form-control" value="$${totalPending.toLocaleString()}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Transactions</label>
+                        <input type="text" class="form-control" value="${studentPayments.length}" readonly>
+                    </div>
+                </div>
+                
+                ${pendingPayments.length > 0 ? `
+                    <div class="form-group">
+                        <label>Pending Payment Details</label>
+                        <div style="background-color: var(--light-gray); padding: 10px; border-radius: 5px; margin-top: 10px;">
+                            ${pendingPayments.map(payment => `
+                                <p style="margin-bottom: 5px;">${payment.feeType} Fee: $${payment.amount} (Due: ${new Date(payment.date).toLocaleDateString()})</p>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+            
+            // Show modal
+            document.getElementById('studentDetailModal').classList.add('active');
+        }
+
+        // Show payment detail modal
+        function showPaymentDetailModal(receiptNo) {
+            const payment = appState.payments.find(p => p.receiptNo === receiptNo);
+            if (!payment) return;
+            
+            // Format date
+            const paymentDate = new Date(payment.date);
+            const formattedDate = paymentDate.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            // Format payment method
+            const methodMap = {
+                'cash': 'Cash',
+                'check': 'Check',
+                'bank_transfer': 'Bank Transfer',
+                'credit_card': 'Credit Card',
+                'mobile_money': 'Mobile Money'
+            };
+            
+            const formattedMethod = methodMap[payment.method] || payment.method;
+            
+            // Populate modal content
+            document.getElementById('paymentDetailContent').innerHTML = `
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h3 style="color: var(--primary);">Payment Receipt</h3>
+                    <h1 style="font-size: 28px; margin: 10px 0;">${payment.receiptNo}</h1>
+                    <p style="color: var(--gray);">${formattedDate}</p>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Student Name</label>
+                        <input type="text" class="form-control" value="${payment.studentName}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Student ID</label>
+                        <input type="text" class="form-control" value="${payment.studentId}" readonly>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Grade</label>
+                        <input type="text" class="form-control" value="Grade ${payment.grade}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Fee Type</label>
+                        <input type="text" class="form-control" value="${payment.feeType} Fee" readonly>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="text" class="form-control" value="$${payment.amount.toLocaleString()}" readonly style="font-weight: bold; font-size: 18px;">
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Method</label>
+                        <input type="text" class="form-control" value="${formattedMethod}" readonly>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Payment Status</label>
+                        <div>
+                            <span class="status ${payment.status}">${payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Reference Number</label>
+                        <input type="text" class="form-control" value="${payment.reference}" readonly>
+                    </div>
+                </div>
+                
+                ${payment.notes ? `
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea class="form-control" rows="3" readonly>${payment.notes}</textarea>
+                    </div>
+                ` : ''}
+                
+                <div style="border-top: 2px dashed var(--light-gray); margin-top: 25px; padding-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 18px;">
+                        <span>Total Amount</span>
+                        <span>$${payment.amount.toLocaleString()}</span>
+                    </div>
+                </div>
+            `;
+            
+            // Show modal
+            document.getElementById('paymentDetailModal').classList.add('active');
+        }
+
+        // Close all modals
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('active');
+            });
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            // Set message and type
+            toastMessage.textContent = message;
+            toast.className = 'toast';
+            toast.classList.add(type);
+            
+            // Show toast
+            toast.classList.add('show');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Helper function to get color from name
+        function getColorFromName(name) {
+            const colors = [
+                '#2c5aa0', // Primary blue
+                '#4caf50', // Green
+                '#f1b814', // Yellow
+                '#e74c3c', // Red
+                '#9b59b6', // Purple
+                '#1abc9c', // Teal
+                '#e67e22', // Orange
+                '#3498db'  // Light blue
+            ];
+            
+            // Use the first character to determine color
+            const index = name.charCodeAt(0) % colors.length;
+            return colors[index];
+        }
+    </script>
+</body>
+</html>
